@@ -38,7 +38,7 @@ class PuPuPrinter:
         
         tk.Label(
             msg,
-            text="❌ Библиотека SoX не найдена!\n\nДля работы смешных звуков установите:\n\nsudo apt install sox\n\nПрограмма будет работать без звука.",
+            text="Библиотека SoX не найдена!\n\nДля работы смешных звуков установите:\n\nsudo apt install sox\n\nПрограмма будет работать без звука.",
             font=("Arial", 11),
             padx=20,
             pady=20
