@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 import tkinter as tk
 import random
 import subprocess
 import threading
+import sys
 
 class PuPuPrinter:
     def __init__(self):
@@ -35,8 +37,9 @@ class PuPuPrinter:
             
             cmd = random.choice(sounds)
             subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except:
-            pass
+        except Exception as e:
+            print(f"Ошибка звука: {e}", file=sys.stderr)
+            print("Установите SoX: sudo apt install sox", file=sys.stderr)
     
     def create_pupu(self):
         window = tk.Toplevel(self.root)
