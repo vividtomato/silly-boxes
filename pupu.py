@@ -1,54 +1,24 @@
-#!/usr/bin/env python3
 import tkinter as tk
 import random
 import subprocess
-import sys
-import shutil
+import threading
 
 class PuPuPrinter:
     def __init__(self):
         self.root = tk.Tk()
         self.root.withdraw()
         
-        if not self.check_sox():
-            self.show_no_sox_message()
-            self.root.destroy()
-            return
-        
         self.screen_width = self.root.winfo_screenwidth()
         self.screen_height = self.root.winfo_screenheight()
         
-        self.fonts = ["Comic Sans MS", "DejaVu Sans", "Ubuntu", "FreeSans", "Arial", "Liberation Sans", "Noto Sans"]
-        self.colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "cyan", "#FF1493", "#FF4500"]
+        self.fonts = ["Arial", "Verdana", "Times", "Courier"]
+        self.colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "cyan"]
         
         self.FADE_STEPS = 60
         self.FADE_DELAY = 30
         
         self.schedule_next()
         self.root.mainloop()
-    
-    def check_sox(self):
-        return shutil.which('play') is not None
-    
-    def show_no_sox_message(self):
-        msg = tk.Toplevel(self.root)
-        msg.title("⚠️ Ошибка")
-        msg.geometry("400x150")
-        msg.resizable(False, False)
-        
-        tk.Label(
-            msg,
-            text="Библиотека SoX не найдена!\n\nДля работы смешных звуков установите:\n\nsudo apt install sox\n\nПрограмма будет работать без звука.",
-            font=("Arial", 11),
-            padx=20,
-            pady=20
-        ).pack()
-        
-        tk.Button(msg, text="Понятно", command=msg.destroy, width=15).pack(pady=5)
-        
-        msg.transient(self.root)
-        msg.grab_set()
-        self.root.wait_window(msg)
     
     def play_sound(self):
         try:
@@ -63,7 +33,8 @@ class PuPuPrinter:
                 ['play', '-n', 'synth', '0.3', 'sine', '200', 'sine', '400', 'delay', '0.1', 'vol', '0.2']
             ]
             
-            subprocess.run(random.choice(sounds), capture_output=True, timeout=0.5)
+            cmd = random.choice(sounds)
+            subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except:
             pass
     
@@ -89,7 +60,7 @@ class PuPuPrinter:
         y = random.randint(20, self.screen_height - label.winfo_reqheight() - 50)
         window.geometry(f"+{x}+{y}")
         
-        self.play_sound()
+        threading.Thread(target=self.play_sound, daemon=True).start()
         
         window.attributes('-alpha', 0.0)
         self.fade_sequence(window, 0)
@@ -115,4 +86,4 @@ class PuPuPrinter:
         self.root.after(delay + 100, self.schedule_next)
 
 if __name__ == "__main__":
-    app = PuPuPrinter()
+    PuPuPrinter()
